@@ -1,0 +1,7 @@
+server:
+  port: 8099
+
+
+
+serial:
+  portId: COM1
