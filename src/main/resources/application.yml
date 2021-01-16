@@ -1,7 +1,7 @@
 server:
-  port: 8099
+  port: 8097
 
 
 
 serial:
-  portId: COM1
+  portId: COM7

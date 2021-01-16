@@ -26,7 +26,8 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
 
     //@Value("${serial.portId:COM1}")
     @Value("${serial.portId}")
-    private String portIdString = "COM1";
+    private String portIdString = "COM6";
+
     private final static Logger log = LoggerFactory.getLogger(SerialComUtils.class);
     /**
      * 监听器,我的理解是独立开辟一个线程监听串口数据 串口通信管理类
