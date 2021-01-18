@@ -30,8 +30,8 @@ public class AppMain {
     private static void startExplorer() {
         try {
             /*指定自己项目的路径*/
-            //Runtime.getRuntime().exec("cmd /c \"C:\\Program Files\\Internet Explorer\\iexplore.exe\" -k http://localhost:8099/index.html");
-            Runtime.getRuntime().exec("cmd /c \"C:\\Program Files\\Mozilla Firefox\\firefox.exe\" -k http://localhost:8099/index.html");
+            Runtime.getRuntime().exec("cmd /c \"C:\\Program Files\\Internet Explorer\\iexplore.exe\" -k http://localhost:8097/index.html");
+            //Runtime.getRuntime().exec("cmd /c \"C:\\Program Files\\Mozilla Firefox\\firefox.exe\" -k http://localhost:8099/index.html");
         } catch (Exception ex) {
             ex.printStackTrace();
         }

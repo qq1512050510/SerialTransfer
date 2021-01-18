@@ -161,6 +161,11 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
         return 0;
     }
 
+    private SerialPortBean createSerialPort(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
+
+        return null;
+    }
+
     @Override
     public void run() {
         // TODO Auto-generated method stub
