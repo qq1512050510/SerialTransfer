@@ -4,4 +4,4 @@ server:
 
 
 serial:
-  portId: COM7
+  portId: COM3

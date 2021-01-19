@@ -54,6 +54,11 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
      */
     private BlockingQueue<String> msgQueue = new LinkedBlockingQueue<String>();
 
+
+    public void setPortIdString(String portIdString) {
+        this.portIdString = portIdString;
+    }
+
     @Override
     /**
      * SerialPort EventListene 的方法,持续监听端口上是否有数据流
@@ -113,45 +118,48 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
 
             System.out.println("设备类型：--->" + portId.getPortType());
             System.out.println("设备名称：---->" + portId.getName());
+            System.out.println("当前端口的对象或应用程序：---->" + portId.getCurrentOwner());
             // 判断端口类型是否为串口
             if (portId.getPortType() == CommPortIdentifier.PORT_SERIAL) {
                 // 判断如果COM1串口存在，就打开该串口
                 if (portId.getName().equals(portIdString)) {
                     try {
+
+                        //TODO:判断接口是否占用
+                        System.out.println(portId.isCurrentlyOwned());
+                        System.out.println(portId);
                         // 打开串口名字为COM_1(名字任意),延迟为2毫秒
                         serialPort = (SerialPort) portId.open(portIdString, 2000);
+                        // 设置当前串口的输入输出流
+                        inputStream = serialPort.getInputStream();
+                        outputStream = serialPort.getOutputStream();
+                        // 给当前串口添加一个监听器
+                        serialPort.addEventListener(this);
+                        // 设置监听器生效，即：当有数据时通知
+                        serialPort.notifyOnDataAvailable(true);
 
+                        // 设置串口的一些读写参数
+                        //波特率,数据位,停止位,奇偶检验
+                        /*serialPort.setSerialPortParams(9600,
+                                SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                                SerialPort.PARITY_NONE);*/
+                        serialPort.setSerialPortParams(115200,
+                                SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
+                                SerialPort.PARITY_NONE);
                     } catch (PortInUseException e) {
                         e.printStackTrace();
                         return 0;
-                    }
-                    // 设置当前串口的输入输出流
-                    try {
-                        inputStream = serialPort.getInputStream();
-                        outputStream = serialPort.getOutputStream();
                     } catch (IOException e) {
                         e.printStackTrace();
                         return 0;
-                    }
-                    // 给当前串口添加一个监听器
-                    try {
-                        serialPort.addEventListener(this);
                     } catch (TooManyListenersException e) {
                         e.printStackTrace();
                         return 0;
-                    }
-                    // 设置监听器生效，即：当有数据时通知
-                    serialPort.notifyOnDataAvailable(true);
-
-                    // 设置串口的一些读写参数
-                    try {
-                        // 比特率、数据位、停止位、奇偶校验位
-                        serialPort.setSerialPortParams(9600,
-                                SerialPort.DATABITS_8, SerialPort.STOPBITS_1,
-                                SerialPort.PARITY_NONE);
                     } catch (UnsupportedCommOperationException e) {
                         e.printStackTrace();
                         return 0;
+                    } finally {
+                        System.out.println("finally");
                     }
 
                     return 1;
@@ -162,7 +170,6 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
     }
 
     private SerialPortBean createSerialPort(SerialPort serialPort, InputStream inputStream, OutputStream outputStream) {
-
         return null;
     }
 
@@ -211,22 +218,26 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
     }
 
     public static void main(String[] args) {
-        SerialComUtils cRead = new SerialComUtils();
-        int i = cRead.startComPort();
-        if (i == 1) {
-            // 启动线程来处理收到的数据
-            cRead.start();
-            try {
-                String st = "哈哈----你好";
-                System.out.println("发出字节数：" + st.getBytes("UTF-8").length);
-                outputStream.write(st.getBytes("UTF-8"), 0,
-                        st.getBytes("UTF-8").length);
-            } catch (IOException e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
+        for (int j = 3; j < 5; j++) {
+            SerialComUtils cRead = new SerialComUtils();
+            cRead.setPortIdString("COM" + j);
+            int i = cRead.startComPort();
+            if (i == 1) {
+                // 启动线程来处理收到的数据
+                cRead.start();
+                try {
+                    String st = "哈哈----你好";
+                    System.out.println("发出字节数：" + st.getBytes("UTF-8").length);
+                    outputStream.write(st.getBytes("UTF-8"), 0,
+                            st.getBytes("UTF-8").length);
+                } catch (IOException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+                return;
             }
-        } else {
-            return;
         }
+
     }
 }
