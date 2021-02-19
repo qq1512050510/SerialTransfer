@@ -1,14 +1,20 @@
 package com.lingyue;
 
 import com.lingyue.serial.SerialComUtils;
+import com.lingyue.util.StringComUtils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+
+import java.util.HashMap;
+import java.util.Map;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.PostConstruct;
@@ -46,20 +52,23 @@ public class AppMain {
         startExplorer();
     }
 
-    @ApiOperation(value = "发送数据")
-    @RequestMapping(value = "/sendContentToCom/{content}/{com}", method = {RequestMethod.GET})
-    public Map sendContentToCom(@PathVariable(value = "content") String content, @PathVariable(value = "com") String comID) {
-        Map<String, Object> resultMap = new HashMap<>();
-        comUtils.sendMsg(content);
+    @ApiOperation("发送数据16进制数据")
+    @RequestMapping(value = {"/sendContentHexToCom/{content}"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET, org.springframework.web.bind.annotation.RequestMethod.POST})
+    public Map sendContentHexToCom(@PathVariable("content") String content) {
+        Map resultMap = new HashMap();
+        byte[] hexString = StringComUtils.hexStringToBinaryStr(content);
+        //comUtils.sendHexMsg(hexString);
+        comUtils.sendHexMsg(content);
+        resultMap.put("content", content);
+        resultMap.put("msg", "发送成功");
         return resultMap;
     }
 
-    @ApiOperation(value = "接收数据")
-    @RequestMapping(value = "/receiveContentToCom/{content}/{com}", method = {RequestMethod.GET})
-    public Map receiveContentFromCom(@PathVariable(value = "content") String content, @PathVariable(value = "com") String comID) {
-        Map<String, Object> resultMap = new HashMap<>();
-        resultMap.put("msg", comUtils.getMsg());
+    @ApiOperation("接收数据")
+    @RequestMapping(value = {"/receiveContentToCom"}, method = {org.springframework.web.bind.annotation.RequestMethod.GET})
+    public Map receiveContentFromCom() {
+        Map resultMap = new HashMap();
+        resultMap.put("msg", this.comUtils.getMsg());
         return resultMap;
     }
-
 }
