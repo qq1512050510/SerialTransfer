@@ -217,6 +217,16 @@ public class SerialComUtils extends Thread implements SerialPortEventListener {
         return msg;
     }
 
+    public String sendHexMsg(String msg) {
+        try {
+            System.out.println("发出字节数：" + StringComUtils.hexStringToBinaryStr(msg).length);
+            outputStream.write(StringComUtils.hexStringToBinaryStr(msg), 0, StringComUtils.hexStringToBinaryStr(msg).length);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return msg;
+    }
+
     public static void main(String[] args) {
         for (int j = 3; j < 5; j++) {
             SerialComUtils cRead = new SerialComUtils();
